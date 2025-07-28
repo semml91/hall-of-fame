@@ -22,7 +22,7 @@
     #chart-container {
       position: relative;
       width: 100%;
-      height: calc(100vh - 100px); /* 100% Höhe minus Header */
+      height: calc(100vh - 100px);
       padding: 10px;
       box-sizing: border-box;
     }
@@ -76,12 +76,33 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false,  // WICHTIG für volle Höhe
+          maintainAspectRatio: false,
           scales: {
-            y: { beginAtZero: true }
+            x: {
+              ticks: {
+                maxRotation: 45, // X-Achsen-Beschriftung leicht drehen
+                minRotation: 30,
+                autoSkip: false,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1 // Y-Achse in 1er-Schritten
+              }
+            }
           },
           plugins: {
-            legend: { labels: { font: { size: 16 } } }
+            legend: {
+              labels: {
+                font: {
+                  size: 16
+                }
+              }
+            }
           }
         }
       });
