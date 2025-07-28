@@ -6,14 +6,38 @@
   <title>Hall of Fame – Diagramm</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 40px; background: #f4f4f4; }
-    h1 { text-align: center; }
-    canvas { max-width: 900px; margin: 40px auto; display: block; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+    }
+
+    #chart-container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 100px); /* 100% Höhe minus Header */
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
   </style>
 </head>
 <body>
   <h1>🏆 Hall of Fame</h1>
-  <canvas id="chart"></canvas>
+  <div id="chart-container">
+    <canvas id="chart"></canvas>
+  </div>
 
   <script>
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
@@ -26,7 +50,6 @@
         const text = await res.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
-        // Beispiel: Spaltenname A = "Name", B = "Punkte"
         const rows = json.table.rows;
         const labels = rows.map(r => r.c[0]?.v || "");
         const values = rows.map(r => parseFloat(r.c[1]?.v) || 0);
@@ -38,7 +61,8 @@
     }
 
     function renderChart(labels, data) {
-      new Chart(document.getElementById("chart"), {
+      const ctx = document.getElementById("chart").getContext("2d");
+      new Chart(ctx, {
         type: "bar",
         data: {
           labels,
@@ -52,8 +76,12 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,  // WICHTIG für volle Höhe
           scales: {
             y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { labels: { font: { size: 16 } } }
           }
         }
       });
