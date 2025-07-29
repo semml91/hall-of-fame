@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hölms of Fame – seit 2005</title>
+  <title>🏆 Hölms of Fame</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -18,17 +18,26 @@
     header {
       background: #2c3e50;
       color: white;
-      padding: 20px 30px;
+      padding: 30px 20px;
       text-align: center;
-      font-size: 1.6em;
+      font-size: 1.8em;
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    header h3 {
+      margin: 0;
+      font-weight: normal;
+      font-size: 1em;
+      color: #cccccc;
     }
 
     #main {
       padding: 20px;
-      max-width: 1000px;
-      margin: auto;
+      max-width: none;
+      width: 100%;
+      margin: 0 auto;
     }
 
     #chart-container {
@@ -39,41 +48,51 @@
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    #export-btn {
-      display: inline-block;
-      margin: 20px 0;
-      padding: 10px 20px;
-      font-size: 16px;
-      background: #27ae60;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    #export-btn:hover {
-      background: #219150;
+      box-sizing: border-box;
+      min-width: 1000px;
     }
 
     canvas {
       width: 100% !important;
       height: 100% !important;
     }
+
+    #export-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 14px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    #export-btn:hover {
+      background: #219150;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
-  <header>🏆 Hölms of Fame</header>
+
+  <header>
+    <h3>seit 2005</h3>
+    🏆 Hölms of Fame
+  </header>
 
   <div id="main">
-    <button id="export-btn">📄 Als PDF speichern</button>
-
     <div id="chart-container">
       <canvas id="chart"></canvas>
     </div>
   </div>
+
+  <button id="export-btn">📄 Als PDF speichern</button>
 
   <script>
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
@@ -181,7 +200,7 @@
         .set({
           margin: 10,
           filename: 'hoelms-of-fame.pdf',
-          html2canvas: { scale: 1.2 }, // geringere Skalierung = bessere Lesbarkeit
+          html2canvas: { scale: 1.2 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         })
         .save();
