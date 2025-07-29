@@ -101,49 +101,53 @@
             }
           ]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: "Feuerwehr",
-                font: {
-                  size: 16
-                }
-              },
-              ticks: {
-                maxRotation: 45,
-                minRotation: 30,
-                autoSkip: false
-              }
-            },
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: "Anzahl Helme",
-                font: {
-                  size: 16
-                }
-              },
-              ticks: {
-                stepSize: 1
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              position: "top",
-              labels: {
-                font: {
-                  size: 14
-                }
-              }
-            }
-          }
-        }
+        // ...
+options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: "Feuerwehr",
+        font: { size: 16 }
+      },
+      ticks: {
+        maxRotation: 45,
+        minRotation: 30,
+        autoSkip: false
+      }
+    },
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: "Anzahl Helme",
+        font: { size: 16 }
+      },
+      ticks: {
+        stepSize: 1
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      position: "top",    // Legende oben
+      align: "end",       // Rechtsbündig innerhalb der Chart-Fläche
+      labels: {
+        font: {
+          size: 14
+        },
+        boxWidth: 20,
+        padding: 10
+      }
+    },
+    tooltip: {
+      enabled: true
+    }
+  }
+}
+// ...
       });
     }
 
