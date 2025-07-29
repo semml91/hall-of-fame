@@ -3,33 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Helmgewinner seit 2005</title>
+  <title>Hall of Fame – Helmverteilung</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
     }
 
-    h1 {
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px 30px;
       text-align: center;
-      padding: 5px;
+      font-size: 1.6em;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    h3 {
-      text-align: center;
-      padding: 5px;
+    #main {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
     }
 
     #chart-container {
       position: relative;
       width: 100%;
-      height: calc(100vh - 100px);
-      padding: 10px;
-      box-sizing: border-box;
+      height: 600px;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #export-btn {
+      display: inline-block;
+      margin: 20px 0;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #export-btn:hover {
+      background: #219150;
     }
 
     canvas {
@@ -39,10 +65,14 @@
   </style>
 </head>
 <body>
-  <h1>🏆 Hölms of Fame 🏆</h1>
-  <h3>seit 2005</h3>
-  <div id="chart-container">
-    <canvas id="chart"></canvas>
+  <header>🏆 Hall of Fame – Helmverteilung</header>
+
+  <div id="main">
+    <button id="export-btn">📄 Als PDF speichern</button>
+
+    <div id="chart-container">
+      <canvas id="chart"></canvas>
+    </div>
   </div>
 
   <script>
@@ -57,7 +87,6 @@
         const json = JSON.parse(text.substr(47).slice(0, -2));
 
         const rows = json.table.rows;
-
         const labels = rows.map(r => r.c[0]?.v || "");
 
         const gold = rows.map(r => parseFloat(r.c[1]?.v) || 0);
@@ -81,75 +110,82 @@
             {
               label: "GOLD",
               data: gold,
-              backgroundColor: "#FFD700", // Gold
+              backgroundColor: "#FFD700",
               borderColor: "#B8860B",
               borderWidth: 1
             },
             {
               label: "SILBER",
               data: silber,
-              backgroundColor: "#C0C0C0", // Silber
+              backgroundColor: "#C0C0C0",
               borderColor: "#A9A9A9",
               borderWidth: 1
             },
             {
               label: "BRONZE",
               data: bronze,
-              backgroundColor: "#CD7F32", // Bronze
+              backgroundColor: "#CD7F32",
               borderColor: "#8B4513",
               borderWidth: 1
             }
           ]
         },
-        // ...
-options: {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      title: {
-        display: true,
-        text: "Feuerwehr",
-        font: { size: 16 }
-      },
-      ticks: {
-        maxRotation: 45,
-        minRotation: 30,
-        autoSkip: false
-      }
-    },
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: "Anzahl Helme",
-        font: { size: 16 }
-      },
-      ticks: {
-        stepSize: 1
-      }
-    }
-  },
-  plugins: {
-    legend: {
-      position: "top",    // Legende oben
-      align: "end",       // Rechtsbündig innerhalb der Chart-Fläche
-      labels: {
-        font: {
-          size: 14
-        },
-        boxWidth: 20,
-        padding: 10
-      }
-    },
-    tooltip: {
-      enabled: true
-    }
-  }
-}
-// ...
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Feuerwehr",
+                font: { size: 16 }
+              },
+              ticks: {
+                maxRotation: 45,
+                minRotation: 30,
+                autoSkip: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Anzahl Helme",
+                font: { size: 16 }
+              },
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: "top",
+              align: "end",
+              labels: {
+                font: { size: 14 },
+                boxWidth: 20,
+                padding: 10
+              }
+            }
+          }
+        }
       });
     }
+
+    // PDF-Export
+    document.getElementById("export-btn").addEventListener("click", () => {
+      const element = document.getElementById("chart-container");
+      html2pdf()
+        .from(element)
+        .set({
+          margin: 10,
+          filename: 'helmverteilung.pdf',
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        })
+        .save();
+    });
 
     loadSheetData();
   </script>
