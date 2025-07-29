@@ -18,34 +18,33 @@
     header {
       background: #2c3e50;
       color: white;
-      padding: 30px 20px;
+      padding: 20px;
       text-align: center;
-      font-size: 1.8em;
+      font-size: 1.6em;
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: relative;
       user-select: none;
     }
 
     header > div {
-      font-size: 0.9em;
+      font-size: 0.85em;
       color: #ccc;
       margin-top: 4px;
       font-weight: normal;
     }
 
     #main {
-      padding: 20px;
+      padding: 10px;
       max-width: 1400px;
       margin: 0 auto;
     }
 
     #chart-container {
       width: 100%;
-      height: 600px;
+      height: 500px;
       background: white;
       border-radius: 8px;
-      padding: 20px;
+      padding: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       box-sizing: border-box;
     }
@@ -58,14 +57,14 @@
 
     #export-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 8px 16px;
+      bottom: 15px;
+      right: 15px;
+      padding: 10px 14px;
       font-size: 14px;
       background: #27ae60;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 50px;
       cursor: pointer;
       opacity: 0.85;
       transition: all 0.3s ease;
@@ -76,6 +75,35 @@
     #export-btn:hover {
       background: #219150;
       opacity: 1;
+    }
+
+    /* --- Mobile Optimierung --- */
+    @media (max-width: 768px) {
+      header {
+        font-size: 1.3em;
+        padding: 15px;
+      }
+      header > div {
+        font-size: 0.75em;
+      }
+      #chart-container {
+        height: 400px;
+        padding: 5px;
+      }
+      #export-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #chart-container {
+        height: 350px;
+      }
+      #export-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
     }
   </style>
 </head>
@@ -92,10 +120,9 @@
     </div>
   </div>
 
-  <button id="export-btn">📄 Als PDF speichern</button>
+  <button id="export-btn">📄 PDF</button>
 
   <script>
-    // Google Sheet Info
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
     const sheetName = "Hall_of_Fame";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
@@ -108,7 +135,6 @@
 
         const rows = json.table.rows;
         const labels = rows.map(r => r.c[0]?.v || "");
-
         const gold = rows.map(r => parseFloat(r.c[1]?.v) || 0);
         const silber = rows.map(r => parseFloat(r.c[2]?.v) || 0);
         const bronze = rows.map(r => parseFloat(r.c[3]?.v) || 0);
@@ -123,12 +149,6 @@
 
     function renderChart(labels, gold, silber, bronze) {
       const ctx = document.getElementById("chart").getContext("2d");
-
-      // Retina-Rendering für scharfe Darstellung
-      const dpr = window.devicePixelRatio || 1;
-      ctx.canvas.width = ctx.canvas.clientWidth * dpr;
-      ctx.canvas.height = ctx.canvas.clientHeight * dpr;
-      ctx.scale(dpr, dpr);
 
       if (chartInstance) {
         chartInstance.destroy();
@@ -170,15 +190,13 @@
               title: {
                 display: true,
                 text: "Feuerwehr",
-                font: { size: 16 }
+                font: { size: 14 }
               },
               ticks: {
-                maxRotation: 60,
-                minRotation: 40,
                 autoSkip: false,
-                font: {
-                  size: 12
-                }
+                maxRotation: 50,
+                minRotation: 30,
+                font: { size: 11 }
               }
             },
             y: {
@@ -186,7 +204,7 @@
               title: {
                 display: true,
                 text: "Anzahl Helme",
-                font: { size: 16 }
+                font: { size: 14 }
               },
               ticks: {
                 stepSize: 1
@@ -198,9 +216,8 @@
               position: "top",
               align: "end",
               labels: {
-                font: { size: 14 },
-                boxWidth: 20,
-                padding: 10
+                font: { size: 12 },
+                boxWidth: 18
               }
             }
           }
@@ -208,12 +225,10 @@
       });
     }
 
-    // PDF-Export via Canvas-Bild (beste Qualität, keine Skalierung)
+    // PDF-Export mit Mobile-Support
     document.getElementById("export-btn").addEventListener("click", () => {
       const canvas = document.getElementById("chart");
       const imgData = canvas.toDataURL('image/png', 1.0);
-
-      // jsPDF import
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
         orientation: 'landscape',
@@ -223,21 +238,17 @@
 
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // Bildmaße proportional anpassen mit 10mm Rand
       const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pageWidth - 20; 
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      let yOffset = 10;
+      let pdfWidth = pageWidth - 20;
+      let pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
       if (pdfHeight > pageHeight - 20) {
-        // Falls zu hoch, skaliere die Höhe auf max Höhe - 20 mm Rand
-        yOffset = 10;
         pdfHeight = pageHeight - 20;
         pdfWidth = (imgProps.width * pdfHeight) / imgProps.height;
       }
 
-      pdf.addImage(imgData, 'PNG', (pageWidth - pdfWidth)/2, yOffset, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', (pageWidth - pdfWidth) / 2, 10, pdfWidth, pdfHeight);
       pdf.save('hoelms-of-fame.pdf');
     });
 
