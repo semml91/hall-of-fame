@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🏆 Hölms of Fame</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -24,13 +24,14 @@
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: relative;
+      user-select: none;
     }
 
-    header h3 {
-      margin: 0;
+    header > div {
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 4px;
       font-weight: normal;
-      font-size: 1em;
-      color: #cccccc;
     }
 
     #main {
@@ -69,6 +70,7 @@
       opacity: 0.85;
       transition: all 0.3s ease;
       z-index: 10;
+      user-select: none;
     }
 
     #export-btn:hover {
@@ -80,9 +82,9 @@
 <body>
 
   <header>
-  🏆 Hölms of Fame
-  <div style="font-size: 0.9em; color: #ccc; margin-top: 4px;">seit 2005</div>
-</header>
+    🏆 Hölms of Fame
+    <div>seit 2005</div>
+  </header>
 
   <div id="main">
     <div id="chart-container">
@@ -93,6 +95,7 @@
   <button id="export-btn">📄 Als PDF speichern</button>
 
   <script>
+    // Google Sheet Info
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
     const sheetName = "Hall_of_Fame";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
@@ -116,16 +119,22 @@
       }
     }
 
+    let chartInstance = null;
+
     function renderChart(labels, gold, silber, bronze) {
       const ctx = document.getElementById("chart").getContext("2d");
 
-      // Scharfe Darstellung bei Zoom
+      // Retina-Rendering für scharfe Darstellung
       const dpr = window.devicePixelRatio || 1;
       ctx.canvas.width = ctx.canvas.clientWidth * dpr;
       ctx.canvas.height = ctx.canvas.clientHeight * dpr;
       ctx.scale(dpr, dpr);
 
-      new Chart(ctx, {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
           labels,
@@ -199,21 +208,39 @@
       });
     }
 
-    // PDF-Export
+    // PDF-Export via Canvas-Bild (beste Qualität, keine Skalierung)
     document.getElementById("export-btn").addEventListener("click", () => {
-  const element = document.getElementById("chart-container");
-  const scale = 1; // Scale 1 für Originalgröße (kein Zoom)
+      const canvas = document.getElementById("chart");
+      const imgData = canvas.toDataURL('image/png', 1.0);
 
-  html2pdf()
-    .from(element)
-    .set({
-      margin: 10,
-      filename: 'hoelms-of-fame.pdf',
-      html2canvas: { scale: scale, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    })
-    .save();
-});
+      // jsPDF import
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Bildmaße proportional anpassen mit 10mm Rand
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pageWidth - 20; 
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      let yOffset = 10;
+      if (pdfHeight > pageHeight - 20) {
+        // Falls zu hoch, skaliere die Höhe auf max Höhe - 20 mm Rand
+        yOffset = 10;
+        pdfHeight = pageHeight - 20;
+        pdfWidth = (imgProps.width * pdfHeight) / imgProps.height;
+      }
+
+      pdf.addImage(imgData, 'PNG', (pageWidth - pdfWidth)/2, yOffset, pdfWidth, pdfHeight);
+      pdf.save('hoelms-of-fame.pdf');
+    });
+
     loadSheetData();
   </script>
 </body>
