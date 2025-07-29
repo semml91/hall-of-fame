@@ -201,18 +201,19 @@
 
     // PDF-Export
     document.getElementById("export-btn").addEventListener("click", () => {
-      const element = document.getElementById("chart-container");
-      html2pdf()
-        .from(element)
-        .set({
-          margin: 10,
-          filename: 'hoelms-of-fame.pdf',
-          html2canvas: { scale: 1.2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        })
-        .save();
-    });
+  const element = document.getElementById("chart-container");
+  const scale = 1; // Scale 1 für Originalgröße (kein Zoom)
 
+  html2pdf()
+    .from(element)
+    .set({
+      margin: 10,
+      filename: 'hoelms-of-fame.pdf',
+      html2canvas: { scale: scale, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    })
+    .save();
+});
     loadSheetData();
   </script>
 </body>
