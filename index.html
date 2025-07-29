@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hall of Fame – Helmverteilung</title>
+  <title>Hölms of Fame – seit 2005</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -65,7 +65,7 @@
   </style>
 </head>
 <body>
-  <header>🏆 Hall of Fame – Helmverteilung</header>
+  <header>🏆 Hölms of Fame</header>
 
   <div id="main">
     <button id="export-btn">📄 Als PDF speichern</button>
@@ -180,8 +180,8 @@
         .from(element)
         .set({
           margin: 10,
-          filename: 'helmverteilung.pdf',
-          html2canvas: { scale: 2 },
+          filename: 'hoelms-of-fame.pdf',
+          html2canvas: { scale: 1.2 }, // geringere Skalierung = bessere Lesbarkeit
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
         })
         .save();
