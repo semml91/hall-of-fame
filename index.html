@@ -29,12 +29,6 @@
       font-weight: normal;
       display: block;
     }
-    #modified-info {
-      text-align: center;
-      color: #666;
-      margin-top: 8px;
-      font-size: 0.9em;
-    }
     #main {
       padding: 20px;
       max-width: 1200px;
@@ -93,7 +87,7 @@
     🏆 Hölms of Fame
     <span class="sub">seit 2005</span>
   </header>
-  <div id="modified-info"></div>
+
   <div id="main">
     <div id="chart-container">
       <canvas id="chart"></canvas>
@@ -105,108 +99,91 @@
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
     const sheetName = "Hall_of_Fame";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-    const apiKey = "AIzaSyD__UHZM5yc3Y5_ThejXR1pZlOCUWUZyAQ"; // <-- hier deinen Google API Key einsetzen
 
     let chartInstance = null;
-
-    async function fetchModifiedTime() {
-      if(!apiKey) return null;
-      try {
-        const res = await fetch(`https://www.googleapis.com/drive/v3/files/${sheetID}?fields=modifiedTime&key=${apiKey}`);
-        const j = await res.json();
-        return j.modifiedTime;
-      } catch(e) {
-        console.warn("Drive API Fehler:", e);
-        return null;
-      }
-    }
-
-    async function loadEverything() {
-      const mod = await fetchModifiedTime();
-      if(mod) {
-        const dt = new Date(mod);
-        const d = dt.toLocaleDateString('de-DE',{year:'numeric',month:'long',day:'numeric'});
-        document.getElementById("modified-info").textContent = `Stand: ${d}`;
-      }
-      await loadSheetData();
-    }
 
     async function loadSheetData() {
       const r = await fetch(sheetURL);
       const t = await r.text();
-      const j = JSON.parse(t.substr(47).slice(0,-2));
+      const j = JSON.parse(t.substr(47).slice(0, -2));
       const rows = j.table.rows || [];
-      const labels = rows.map(r=>r.c[0]?.v||"");
-      const gold   = rows.map(r=>Number(r.c[1]?.v||0));
-      const silber = rows.map(r=>Number(r.c[2]?.v||0));
-      const bronze = rows.map(r=>Number(r.c[3]?.v||0));
+      const labels = rows.map(r => r.c[0]?.v || "");
+      const gold   = rows.map(r => Number(r.c[1]?.v || 0));
+      const silber = rows.map(r => Number(r.c[2]?.v || 0));
+      const bronze = rows.map(r => Number(r.c[3]?.v || 0));
       renderChart(labels, gold, silber, bronze);
     }
 
-    function renderChart(labels,gold,silber,bronze){
+    function renderChart(labels, gold, silber, bronze) {
       const ctx = document.getElementById("chart").getContext("2d");
-      if(chartInstance) chartInstance.destroy();
+      if (chartInstance) chartInstance.destroy();
       chartInstance = new Chart(ctx, {
-        type:"bar",
-        data:{
+        type: "bar",
+        data: {
           labels,
-          datasets:[
-            { label:"GOLD", data:gold, backgroundColor:"#FFD700", borderColor:"#B8860B", borderWidth:1 },
-            { label:"SILBER", data:silber, backgroundColor:"#C0C0C0", borderColor:"#A9A9A9", borderWidth:1 },
-            { label:"BRONZE", data:bronze, backgroundColor:"#CD7F32", borderColor:"#8B4513", borderWidth:1 }
+          datasets: [
+            { label: "GOLD", data: gold, backgroundColor: "#FFD700", borderColor: "#B8860B", borderWidth: 1 },
+            { label: "SILBER", data: silber, backgroundColor: "#C0C0C0", borderColor: "#A9A9A9", borderWidth: 1 },
+            { label: "BRONZE", data: bronze, backgroundColor: "#CD7F32", borderColor: "#8B4513", borderWidth: 1 }
           ]
         },
-        options:{
-          responsive:true,
-          maintainAspectRatio:false,
-          scales:{
-            x:{
-              title:{ display:true, text:"Feuerwehr" },
-              ticks:{ autoSkip:false, maxRotation:60, minRotation:40 }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: { display: true, text: "Feuerwehr" },
+              ticks: { autoSkip: false, maxRotation: 60, minRotation: 40 }
             },
-            y:{
-              beginAtZero:true,
-              title:{ display:true, text:"Anzahl Helme" },
-              ticks:{stepSize:1}
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: "Anzahl Helme" },
+              ticks: { stepSize: 1 }
             }
           },
-          plugins:{ legend:{ position:"top", labels:{ boxWidth:20 } } }
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 20 } }
+          }
         }
       });
     }
 
     document.getElementById("export-btn").addEventListener("click", () => {
-      if(!chartInstance) return;
+      if (!chartInstance) return;
       const canvas = chartInstance.canvas;
-      const img = canvas.toDataURL('image/png',1.0);
+      const img = canvas.toDataURL('image/png', 1.0);
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-      const pw= pdf.internal.pageSize.getWidth();
-      const ph= pdf.internal.pageSize.getHeight();
-      const title="🏆 Hölms of Fame – seit 2005";
-      pdf.setFont("helvetica","bold");
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const pw = pdf.internal.pageSize.getWidth();
+      const ph = pdf.internal.pageSize.getHeight();
+      const title = "🏆 Hölms of Fame – seit 2005";
+
+      pdf.setFont("helvetica", "bold");
       pdf.setFontSize(20);
       const tw = pdf.getTextWidth(title);
-      pdf.text(title,(pw-tw)/2,20);
+      pdf.text(title, (pw - tw) / 2, 20);
 
       const props = pdf.getImageProperties(img);
       let iw = pw - 20;
-      let ih = (props.height * iw)/props.width;
-      if(ih > ph-40){ ih = ph-40; iw = (props.width * ih)/props.height; }
-      pdf.addImage(img,'PNG',(pw-iw)/2,30,iw,ih);
+      let ih = (props.height * iw) / props.width;
+      if (ih > ph - 40) {
+        ih = ph - 40;
+        iw = (props.width * ih) / props.height;
+      }
+      pdf.addImage(img, 'PNG', (pw - iw) / 2, 30, iw, ih);
 
       const blob = pdf.output("blob");
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
-      setTimeout(()=>URL.revokeObjectURL(url),6000);
+      setTimeout(() => URL.revokeObjectURL(url), 6000);
     });
 
     window.addEventListener('resize', () => {
-      if(!chartInstance) return;
+      if (!chartInstance) return;
       loadSheetData();
     });
 
-    loadEverything();
+    loadSheetData();
   </script>
 </body>
 </html>
