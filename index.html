@@ -128,17 +128,18 @@
           ]
         },
         options: {
+          indexAxis: "y", // horizontale Balken
           responsive: true,
           maintainAspectRatio: false,
           scales: {
             x: {
-              title: { display: true, text: "Feuerwehr" },
-              ticks: { autoSkip: false, maxRotation: 60, minRotation: 40 }
-            },
-            y: {
               beginAtZero: true,
               title: { display: true, text: "Anzahl Helme" },
               ticks: { stepSize: 1 }
+            },
+            y: {
+              title: { display: true, text: "Feuerwehr" },
+              ticks: { autoSkip: false }
             }
           },
           plugins: {
