@@ -8,73 +8,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-    header {
-      background: #2c3e50;
-      color: white;
-      padding: 24px 16px;
-      text-align: center;
-      font-size: 1.8em;
-      font-weight: bold;
-    }
-    header .sub {
-      font-size: 0.9em;
-      color: #ccc;
-      margin-top: 6px;
-      font-weight: normal;
-      display: block;
-    }
-    #main {
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    #chart-container {
-      width: 100%;
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      box-sizing: border-box;
-      overflow-y: auto;
-      max-height: 90vh;
-    }
-    canvas {
-      width: 100% !important;
-      display: block;
-    }
-    #export-btn {
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      padding: 10px 16px;
-      font-size: 14px;
-      background: #27ae60;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 10;
-    }
-    @media (max-width: 768px) {
-      header {
-        font-size: 1.5em;
-        padding: 18px 12px;
-      }
-      header .sub {
-        font-size: 0.85em;
-      }
-      #export-btn {
-        bottom: 12px;
-        right: 12px;
-        padding: 10px 14px;
-        font-size: 13px;
-      }
+    body { margin:0; font-family:'Roboto',sans-serif; background:#f9f9f9; color:#333; }
+    header { background:#2c3e50; color:white; padding:24px 16px; text-align:center; font-size:1.8em; font-weight:bold; }
+    header .sub { font-size:0.9em; color:#ccc; margin-top:6px; font-weight:normal; display:block; }
+    #main { padding:20px; max-width:1200px; margin:auto; }
+    #chart-container { width:100%; background:white; border-radius:8px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.1); box-sizing:border-box; overflow-y:auto; max-height:90vh; }
+    canvas { width:100% !important; display:block; }
+    #export-btn { position:fixed; bottom:16px; right:16px; padding:10px 16px; font-size:14px; background:#27ae60; color:white; border:none; border-radius:6px; cursor:pointer; z-index:10; }
+    @media (max-width:768px) {
+      header { font-size:1.5em; padding:18px 12px; }
+      header .sub { font-size:0.85em; }
+      #export-btn { bottom:12px; right:12px; padding:10px 14px; font-size:13px; }
     }
   </style>
 </head>
@@ -83,11 +27,8 @@
     🏆 Hölms of Fame
     <span class="sub">seit 2005</span>
   </header>
-
   <div id="main">
-    <div id="chart-container">
-      <canvas id="chart"></canvas>
-    </div>
+    <div id="chart-container"><canvas id="chart"></canvas></div>
   </div>
   <button id="export-btn">📄 Als PDF speichern</button>
 
@@ -95,136 +36,75 @@
     const sheetID = "12_qVUGniE210316Oc5UW5SzuEwqCul7JFva9On3Flrk";
     const sheetName = "Hall_of_Fame";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-
     let chartInstance = null;
 
-    async function loadSheetData() {
-      const response = await fetch(sheetURL);
-      const text = await response.text();
-      const json = JSON.parse(text.substr(47).slice(0, -2));
-      const rows = json.table.rows || [];
-
-      const labels = rows.map(r => r.c[0]?.v || "");
-      const gold   = rows.map(r => Number(r.c[1]?.v || 0));
-      const silber = rows.map(r => Number(r.c[2]?.v || 0));
-      const bronze = rows.map(r => Number(r.c[3]?.v || 0));
-
+    async function loadSheetData(){
+      const r = await fetch(sheetURL);
+      const t = await r.text();
+      const j = JSON.parse(t.substr(47).slice(0,-2));
+      const rows = j.table.rows||[];
+      const labels = rows.map(r=>r.c[0]?.v||"");
+      const gold = rows.map(r=>Number(r.c[1]?.v||0));
+      const silber = rows.map(r=>Number(r.c[2]?.v||0));
+      const bronze = rows.map(r=>Number(r.c[3]?.v||0));
       renderChart(labels, gold, silber, bronze);
     }
 
-    function renderChart(labels, gold, silber, bronze) {
+    function renderChart(labels, gold, silber, bronze){
       const canvas = document.getElementById("chart");
-
-      const heightPerItem = 120;
+      const heightPerItem = 160;
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
-      const fontSizeY = window.innerWidth < 600 ? 12 : 18;
+      const fontSizeY = window.innerWidth < 600 ? 14 : 20;
 
       const ctx = canvas.getContext("2d");
-      if (chartInstance) chartInstance.destroy();
+      if(chartInstance) chartInstance.destroy();
       chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "GOLD",
-              data: gold,
-              backgroundColor: "#FFD700",
-              borderColor: "#B8860B",
-              borderWidth: 1
-            },
-            {
-              label: "SILBER",
-              data: silber,
-              backgroundColor: "#C0C0C0",
-              borderColor: "#A9A9A9",
-              borderWidth: 1
-            },
-            {
-              label: "BRONZE",
-              data: bronze,
-              backgroundColor: "#CD7F32",
-              borderColor: "#8B4513",
-              borderWidth: 1
-            }
-          ]
-        },
-        options: {
-          indexAxis: "y",
-          responsive: true,
-          maintainAspectRatio: false,
-          elements: {
-            bar: {
-              barThickness: 70
-            }
+        type:"bar",
+        data:{ labels, datasets:[
+          {label:"GOLD", data:gold, backgroundColor:"#FFD700", borderColor:"#B8860B", borderWidth:1},
+          {label:"SILBER", data:silber, backgroundColor:"#C0C0C0", borderColor:"#A9A9A9", borderWidth:1},
+          {label:"BRONZE", data:bronze, backgroundColor:"#CD7F32", borderColor:"#8B4513", borderWidth:1}
+        ]},
+        options:{
+          indexAxis:"y",
+          responsive:true,
+          maintainAspectRatio:false,
+          elements:{ bar:{ barThickness:90 } },
+          scales:{
+            x:{ beginAtZero:true, title:{ display:true, text:"Anzahl Helme" }, ticks:{ stepSize:1 } },
+            y:{ title:{ display:true, text:"Feuerwehr" }, ticks:{ autoSkip:false, font:{ size:fontSizeY } } }
           },
-          scales: {
-            x: {
-              beginAtZero: true,
-              title: { display: true, text: "Anzahl Helme" },
-              ticks: { stepSize: 1 }
-            },
-            y: {
-              title: { display: true, text: "Feuerwehr" },
-              ticks: {
-                autoSkip: false,
-                font: {
-                  size: fontSizeY
-                }
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              position: "top",
-              labels: { boxWidth: 20, font: { size: 14 } }
-            }
-          },
-          layout: {
-            padding: { top: 20, bottom: 20 }
-          }
+          plugins:{ legend:{ position:"top", labels:{ boxWidth:20, font:{ size:16 } } } },
+          layout:{ padding:{ top:20, bottom:20 } },
+          datasets:{ bar:{ categoryPercentage:1.0, barPercentage:0.5 } }
         }
       });
     }
 
-    document.getElementById("export-btn").addEventListener("click", () => {
-      if (!chartInstance) return;
-
-      const canvas = chartInstance.canvas;
-      const img = canvas.toDataURL('image/png', 1.0);
+    document.getElementById("export-btn").addEventListener("click", ()=>{
+      if(!chartInstance) return;
+      const img = chartInstance.canvas.toDataURL('image/png',1.0);
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const pw = pdf.internal.pageSize.getWidth();
-      const ph = pdf.internal.pageSize.getHeight();
+      const pdf = new jsPDF({ orientation:"landscape", unit:"mm", format:"a4" });
+      const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
       const title = "🏆 Hölms of Fame – seit 2005";
-
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(20);
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(20);
       const tw = pdf.getTextWidth(title);
-      pdf.text(title, (pw - tw) / 2, 20);
+      pdf.text(title,(pw-tw)/2,20);
 
       const props = pdf.getImageProperties(img);
-      let iw = pw - 20;
-      let ih = (props.height * iw) / props.width;
-      if (ih > ph - 40) {
-        ih = ph - 40;
-        iw = (props.width * ih) / props.height;
-      }
-      pdf.addImage(img, 'PNG', (pw - iw) / 2, 30, iw, ih);
+      let iw = pw-20, ih = props.height*iw/props.width;
+      if(ih > ph-40){ ih = ph-40; iw = props.width*ih/props.height; }
+      pdf.addImage(img,"PNG",(pw-iw)/2,30,iw,ih);
 
-      const blob = pdf.output("blob");
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 6000);
+      const blob = pdf.output("blob"), url = URL.createObjectURL(blob);
+      window.open(url,'_blank');
+      setTimeout(()=>URL.revokeObjectURL(url),6000);
     });
 
-    window.addEventListener('resize', () => {
-      if (!chartInstance) return;
-      loadSheetData(); // reload chart on resize to apply font change
-    });
-
+    window.addEventListener('resize', ()=>{ if(chartInstance) loadSheetData(); });
     loadSheetData();
   </script>
 </body>
