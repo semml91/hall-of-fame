@@ -115,7 +115,7 @@
     function renderChart(labels, gold, silber, bronze) {
       const canvas = document.getElementById("chart");
 
-      const heightPerItem = 100; // deutlich größerer Abstand
+      const heightPerItem = 300; // deutlich größerer Abstand
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
@@ -155,7 +155,7 @@
           maintainAspectRatio: false,
           elements: {
             bar: {
-              barThickness: 50 // dicke Balken
+              barThickness: 200 // dicke Balken
             }
           },
           scales: {
