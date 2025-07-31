@@ -119,6 +119,8 @@
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
+      const fontSizeY = window.innerWidth < 600 ? 12 : 18;
+
       const ctx = canvas.getContext("2d");
       if (chartInstance) chartInstance.destroy();
       chartInstance = new Chart(ctx, {
@@ -169,7 +171,7 @@
               ticks: {
                 autoSkip: false,
                 font: {
-                  size: 18
+                  size: fontSizeY
                 }
               }
             }
@@ -181,16 +183,7 @@
             }
           },
           layout: {
-            padding: {
-              top: 20,
-              bottom: 20
-            }
-          },
-          datasets: {
-            bar: {
-              categoryPercentage: 0.6,
-              barPercentage: 1.0
-            }
+            padding: { top: 20, bottom: 20 }
           }
         }
       });
@@ -229,7 +222,7 @@
 
     window.addEventListener('resize', () => {
       if (!chartInstance) return;
-      loadSheetData();
+      loadSheetData(); // reload chart on resize to apply font change
     });
 
     loadSheetData();
