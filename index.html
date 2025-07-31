@@ -99,20 +99,23 @@
     let chartInstance = null;
 
     async function loadSheetData() {
-      const r = await fetch(sheetURL);
-      const t = await r.text();
-      const j = JSON.parse(t.substr(47).slice(0, -2));
-      const rows = j.table.rows || [];
+      const response = await fetch(sheetURL);
+      const text = await response.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows || [];
+
       const labels = rows.map(r => r.c[0]?.v || "");
       const gold   = rows.map(r => Number(r.c[1]?.v || 0));
       const silber = rows.map(r => Number(r.c[2]?.v || 0));
       const bronze = rows.map(r => Number(r.c[3]?.v || 0));
+
       renderChart(labels, gold, silber, bronze);
     }
 
     function renderChart(labels, gold, silber, bronze) {
       const canvas = document.getElementById("chart");
-      const heightPerItem = 150; // mehr Höhe pro Item
+
+      const heightPerItem = 100; // deutlich größerer Abstand
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
@@ -123,9 +126,27 @@
         data: {
           labels,
           datasets: [
-            { label: "GOLD", data: gold, backgroundColor: "#FFD700", borderColor: "#B8860B", borderWidth: 1 },
-            { label: "SILBER", data: silber, backgroundColor: "#C0C0C0", borderColor: "#A9A9A9", borderWidth: 1 },
-            { label: "BRONZE", data: bronze, backgroundColor: "#CD7F32", borderColor: "#8B4513", borderWidth: 1 }
+            {
+              label: "GOLD",
+              data: gold,
+              backgroundColor: "#FFD700",
+              borderColor: "#B8860B",
+              borderWidth: 1
+            },
+            {
+              label: "SILBER",
+              data: silber,
+              backgroundColor: "#C0C0C0",
+              borderColor: "#A9A9A9",
+              borderWidth: 1
+            },
+            {
+              label: "BRONZE",
+              data: bronze,
+              backgroundColor: "#CD7F32",
+              borderColor: "#8B4513",
+              borderWidth: 1
+            }
           ]
         },
         options: {
@@ -134,7 +155,7 @@
           maintainAspectRatio: false,
           elements: {
             bar: {
-              barThickness: 40 // dickere Balken
+              barThickness: 50 // dicke Balken
             }
           },
           scales: {
@@ -149,7 +170,22 @@
             }
           },
           plugins: {
-            legend: { position: "top", labels: { boxWidth: 20 } }
+            legend: {
+              position: "top",
+              labels: { boxWidth: 20 }
+            }
+          },
+          layout: {
+            padding: {
+              top: 20,
+              bottom: 20
+            }
+          },
+          datasets: {
+            bar: {
+              categoryPercentage: 0.5,
+              barPercentage: 1.0
+            }
           }
         }
       });
@@ -157,6 +193,7 @@
 
     document.getElementById("export-btn").addEventListener("click", () => {
       if (!chartInstance) return;
+
       const canvas = chartInstance.canvas;
       const img = canvas.toDataURL('image/png', 1.0);
       const { jsPDF } = window.jspdf;
