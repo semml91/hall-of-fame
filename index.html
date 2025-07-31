@@ -112,7 +112,7 @@
 
     function renderChart(labels, gold, silber, bronze) {
       const canvas = document.getElementById("chart");
-      const heightPerItem = 80; // px pro Kategorie
+      const heightPerItem = 70; // mehr Höhe pro Item
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
@@ -132,6 +132,11 @@
           indexAxis: "y",
           responsive: true,
           maintainAspectRatio: false,
+          elements: {
+            bar: {
+              barThickness: 40 // dickere Balken
+            }
+          },
           scales: {
             x: {
               beginAtZero: true,
