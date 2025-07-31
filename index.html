@@ -115,7 +115,7 @@
     function renderChart(labels, gold, silber, bronze) {
       const canvas = document.getElementById("chart");
 
-      const heightPerItem = 300; // deutlich größerer Abstand
+      const heightPerItem = 120;
       const totalHeight = labels.length * heightPerItem;
       canvas.height = totalHeight;
 
@@ -155,7 +155,7 @@
           maintainAspectRatio: false,
           elements: {
             bar: {
-              barThickness: 200 // dicke Balken
+              barThickness: 70
             }
           },
           scales: {
@@ -166,13 +166,18 @@
             },
             y: {
               title: { display: true, text: "Feuerwehr" },
-              ticks: { autoSkip: false }
+              ticks: {
+                autoSkip: false,
+                font: {
+                  size: 18
+                }
+              }
             }
           },
           plugins: {
             legend: {
               position: "top",
-              labels: { boxWidth: 20 }
+              labels: { boxWidth: 20, font: { size: 14 } }
             }
           },
           layout: {
@@ -183,7 +188,7 @@
           },
           datasets: {
             bar: {
-              categoryPercentage: 0.5,
+              categoryPercentage: 0.6,
               barPercentage: 1.0
             }
           }
