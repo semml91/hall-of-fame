@@ -19,8 +19,8 @@
 
     /* Header */
     header {
-      background: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') 
-                  center/cover no-repeat;
+      background: url('https://cdn.pixabay.com/photo/2020/07/09/06/37/sauna-5384906_1280.jpg') 
+                  center/cover no-repeat; /* Bild: finnische Sauna Innenansicht  [oai_citation:1‡Pixabay](https://pixabay.com/photos/sauna-lapland-sauna-finnish-sauna-5384906/?utm_source=chatgpt.com) */
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -36,51 +36,63 @@
     header h1 {
       font-size: 3rem;
       margin: 0;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
       animation: fadeInDown 2s ease;
     }
 
     header p {
       font-size: 1.3rem;
       margin-top: 0.5rem;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+      text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
       animation: fadeInUp 2s ease;
     }
 
-    /* Dampf-Effekt */
+    /* Stärkerer Dampf-Effekt */
     .steam {
       position: absolute;
       bottom: 0;
-      left: 50%;
-      width: 200px;
-      height: 300px;
-      background: radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, transparent 80%);
-      opacity: 0.5;
       border-radius: 50%;
-      animation: rise 6s infinite ease-in-out;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 80%);
+      opacity: 0.6;
+      animation: riseStrong 5s infinite ease-out;
     }
 
+    .steam:nth-child(1) {
+      width: 250px;
+      height: 400px;
+      left: 45%;
+      animation-duration: 5s;
+    }
     .steam:nth-child(2) {
-      left: 40%;
-      width: 150px;
-      height: 250px;
-      animation-duration: 7s;
+      width: 200px;
+      height: 350px;
+      left: 30%;
+      animation-duration: 6s;
+      animation-delay: 1s;
     }
-
     .steam:nth-child(3) {
+      width: 220px;
+      height: 370px;
       left: 60%;
+      animation-duration: 6.5s;
+      animation-delay: 2s;
+    }
+    .steam:nth-child(4) {
       width: 180px;
-      height: 280px;
-      animation-duration: 8s;
+      height: 330px;
+      left: 55%;
+      animation-duration: 7s;
+      animation-delay: 3s;
     }
 
-    @keyframes rise {
-      0% { transform: translateY(0) scale(1); opacity: 0.5; }
-      50% { transform: translateY(-150px) scale(1.2); opacity: 0.3; }
-      100% { transform: translateY(-300px) scale(1.4); opacity: 0; }
+    @keyframes riseStrong {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      10% { opacity: 0.7; }
+      50% { transform: translateY(-200px) scale(1.2); opacity: 0.5; }
+      100% { transform: translateY(-500px) scale(1.5); opacity: 0; }
     }
 
-    /* Animationen */
+    /* Animationen für Titel */
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-40px); }
       to { opacity: 1; transform: translateY(0); }
@@ -97,7 +109,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: rgba(58,46,37,0.8);
+      background: rgba(58,46,37,0.85);
       padding: 0.7rem;
       z-index: 1000;
       text-align: center;
@@ -147,7 +159,7 @@
 
     .karte:hover {
       transform: translateY(-10px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
     .karte i {
@@ -203,7 +215,8 @@
   <header>
     <h1>Saunameister Lukas Barani</h1>
     <p>Entspannung, Aufgüsse & Wellness für Körper und Geist</p>
-    <!-- Dampf-Effekt -->
+    <!-- Mehrere Dampf-Effekte -->
+    <div class="steam"></div>
     <div class="steam"></div>
     <div class="steam"></div>
     <div class="steam"></div>
