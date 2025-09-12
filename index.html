@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Saunameister Max Mustermann</title>
+  <title>Saunameister Lukas Barani</title>
+  <!-- Font Awesome für Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Grunddesign */
     body {
@@ -12,11 +14,12 @@
       background-color: #f4ede4;
       color: #3a2e25;
       line-height: 1.6;
+      scroll-behavior: smooth;
     }
 
     /* Header */
     header {
-      background: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') 
+      background: url('https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') 
                   center/cover no-repeat;
       height: 100vh;
       display: flex;
@@ -26,18 +29,66 @@
       text-align: center;
       color: white;
       background-attachment: fixed;
+      position: relative;
+      overflow: hidden;
     }
 
     header h1 {
       font-size: 3rem;
       margin: 0;
       text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+      animation: fadeInDown 2s ease;
     }
 
     header p {
       font-size: 1.3rem;
       margin-top: 0.5rem;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+      animation: fadeInUp 2s ease;
+    }
+
+    /* Dampf-Effekt */
+    .steam {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 200px;
+      height: 300px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, transparent 80%);
+      opacity: 0.5;
+      border-radius: 50%;
+      animation: rise 6s infinite ease-in-out;
+    }
+
+    .steam:nth-child(2) {
+      left: 40%;
+      width: 150px;
+      height: 250px;
+      animation-duration: 7s;
+    }
+
+    .steam:nth-child(3) {
+      left: 60%;
+      width: 180px;
+      height: 280px;
+      animation-duration: 8s;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.5; }
+      50% { transform: translateY(-150px) scale(1.2); opacity: 0.3; }
+      100% { transform: translateY(-300px) scale(1.4); opacity: 0; }
+    }
+
+    /* Animationen */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Navigation */
@@ -73,6 +124,7 @@
       text-align: center;
       font-size: 2rem;
       margin-bottom: 2rem;
+      position: relative;
     }
 
     /* Leistungen */
@@ -90,6 +142,18 @@
       padding: 2rem;
       max-width: 300px;
       text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .karte:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .karte i {
+      font-size: 2.5rem;
+      color: #8b5e3c;
+      margin-bottom: 1rem;
     }
 
     .karte h3 {
@@ -137,8 +201,12 @@
 
   <!-- Header -->
   <header>
-    <h1>Saunameister Max Mustermann</h1>
+    <h1>Saunameister Lukas Barani</h1>
     <p>Entspannung, Aufgüsse & Wellness für Körper und Geist</p>
+    <!-- Dampf-Effekt -->
+    <div class="steam"></div>
+    <div class="steam"></div>
+    <div class="steam"></div>
   </header>
 
   <!-- Über mich -->
@@ -156,14 +224,17 @@
     <h2>Meine Leistungen</h2>
     <div class="leistungen">
       <div class="karte">
+        <i class="fas fa-water"></i>
         <h3>Klassische Aufgüsse</h3>
         <p>Traditionelle Aromadüfte für ein authentisches Saunaerlebnis.</p>
       </div>
       <div class="karte">
+        <i class="fas fa-leaf"></i>
         <h3>Themen-Aufgüsse</h3>
         <p>Kreative Rituale mit Musik, Düften und abgestimmter Stimmung.</p>
       </div>
       <div class="karte">
+        <i class="fas fa-fire"></i>
         <h3>Event-Sauna</h3>
         <p>Perfekt für Wellness-Hotels, Events und private Feiern.</p>
       </div>
@@ -175,12 +246,12 @@
     <h2>Kontakt</h2>
     <p>Haben Sie Interesse an einem Saunaerlebnis der besonderen Art?<br>
     Schreiben Sie mir eine Nachricht oder rufen Sie mich an.</p>
-    <a href="mailto:info@saunameister.de">E-Mail senden</a>
+    <a href="mailto:info@saunameister.de"><i class="fas fa-envelope"></i> E-Mail senden</a>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>&copy; 2025 Saunameister Max Mustermann | Wellness & Entspannung</p>
+    <p>&copy; 2025 Saunameister Lukas Barani | Wellness & Entspannung</p>
   </footer>
 
 </body>
